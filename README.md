@@ -1,6 +1,6 @@
 <div align="center">
 
-# ðŸ›ï¸ SchoolHub â€” School Information & Management Portal
+# 🏛️ SchoolHub — School Information & Management Portal
 
 [![Frontend](https://img.shields.io/badge/Frontend-React%2018%20%7C%20Vite-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactjs.org/)
 [![Backend](https://img.shields.io/badge/Backend-Python%20%7C%20Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
@@ -14,7 +14,7 @@
 
 </div>
 
-## ðŸ“Œ Table of Contents
+## 📌 Table of Contents
 - [Simple Project Architecture](#-simple-project-architecture)
 - [How Data Flows](#-how-data-flows)
 - [Database Schema](#-database-schema)
@@ -26,19 +26,19 @@
 
 ---
 
-## ðŸ—ï¸ Simple Project Architecture
+## 🏗️ Simple Project Architecture
 
 The application uses a standard 3-tier web architecture:
 
 ```mermaid
 flowchart LR
-    A["Frontend (React 18 + Vite)<br/>â€¢ Responsive Pages & Drawer<br/>â€¢ Student Portal Dashboard"] <--> |"HTTP / REST API (JSON)"| B["Backend (Python Flask)<br/>â€¢ REST API Endpoints<br/>â€¢ Werkzeug Password Hashing"]
-    B <--> |"SQL Queries (psycopg2)"| C["Database (PostgreSQL)<br/>â€¢ Students, Marks, Attendance<br/>â€¢ Notices & Enquiries"]
+    A["Frontend (React 18 + Vite)<br/>• Responsive Pages & Drawer<br/>• Student Portal Dashboard"] <--> |"HTTP / REST API (JSON)"| B["Backend (Python Flask)<br/>• REST API Endpoints<br/>• Werkzeug Password Hashing"]
+    B <--> |"SQL Queries (psycopg2)"| C["Database (PostgreSQL)<br/>• Students, Marks, Attendance<br/>• Notices & Enquiries"]
 ```
 
 ---
 
-## ðŸ”„ How Data Flows
+## 🔄 How Data Flows
 
 A simple step-by-step lifecycle of how information moves through the system:
 
@@ -60,7 +60,7 @@ sequenceDiagram
 
 ---
 
-## ðŸ—ƒï¸ Database Schema
+## 🗃️ Database Schema
 
 The database consists of 5 simple, related tables in PostgreSQL:
 
@@ -112,7 +112,7 @@ erDiagram
 
 ---
 
-## ðŸŒŸ Key Features
+## 🌟 Key Features
 
 ### 1. Public School Website
 - **Always-Accessible Menu**: A collapsible side navigation drawer that opens smoothly on all screens (desktop, tablet, and mobile) with an overlay backdrop and keyboard `Escape` support.
@@ -135,7 +135,7 @@ erDiagram
 
 ---
 
-## ðŸ’» Technology Stack
+## 💻 Technology Stack
 
 - **Frontend**: React 18, Vite, React Router DOM, Lucide Icons, Vanilla CSS.
 - **Backend**: Python 3, Flask, Flask-CORS, Werkzeug Security, psycopg2.
@@ -144,7 +144,7 @@ erDiagram
 
 ---
 
-## ðŸš€ Quick Start & Setup
+## 🚀 Quick Start & Setup
 
 ### Step 1: Database Setup
 Make sure PostgreSQL is running on port `5432`, then run:
@@ -172,7 +172,7 @@ npm run dev
 
 ---
 
-## ðŸ“¡ API Endpoints
+## 📡 API Endpoints
 
 | Method | Endpoint | Description |
 |---|---|---|
@@ -192,14 +192,14 @@ npm run dev
 
 ---
 
-## ðŸ‘¥ Project Team & Work Distribution
+## 👥 Project Team & Work Distribution
 
 | Team Member | Module Focus | Contributions & Implemented Features |
 |:---|:---|:---|
-| **Avnish Yadav** | **UI Design & Core Layout (Frontend)** | â€¢ Heritage CSS Design System & typography<br>â€¢ Responsive Navbar with collapsible side navigation drawer<br>â€¢ Homepage (`Home.jsx`) layout, hero banner, and Principal's section<br>â€¢ School crest branding and SVG assets |
-| **Rahul Singh** | **Pages & Student Portal UI (Frontend)** | â€¢ Informational pages (`About.jsx`, `Academics.jsx`, `Facilities.jsx`)<br>â€¢ Interactive stream switcher (Science, Commerce, Humanities)<br>â€¢ Notices filtering & search UI (`Notices.jsx`)<br>â€¢ Student Portal UI (`StudentLogin.jsx`, `StudentDashboard.jsx`)<br>â€¢ Contact page & enquiry form (`Contact.jsx`) and `Footer.jsx` |
-| **Ayush Srivastava** | **API Core & Authentication (Backend)** | â€¢ Flask server core architecture (`app.py`)<br>â€¢ Werkzeug scrypt password hashing and verification<br>â€¢ REST API authentication endpoints (`POST /api/login`)<br>â€¢ Frontend-Backend fetch service layer (`api.js`) with fallback caching |
-| **Ishan Bisht** | **Results & Attendance Services (Backend)** | â€¢ Student portal API endpoints (`/api/student/profile`, `/api/student/results`)<br>â€¢ Dynamic marks calculation, percentage, and grade mapping<br>â€¢ Student attendance statistics computation & eligibility logic<br>â€¢ Server-side input validation and error handling |
-| **Shivansh** | **Notices & Communication API (Backend)** | â€¢ Notice board endpoints (`/api/notices`, `/api/notices/latest`)<br>â€¢ Category-based notice filtering logic<br>â€¢ Contact form submission endpoint (`POST /api/contact`)<br>â€¢ Flask-CORS cross-origin configuration and route documentation |
-| **Rohan** | **Database Schema & Management (Database)** | â€¢ PostgreSQL database schema design (`schema.sql`)<br>â€¢ Primary key / foreign key relationships with cascade rules<br>â€¢ Database connection manager (`database.py`) using `psycopg2`<br>â€¢ Automated database initializer script (`init_db.py`)<br>â€¢ Realistic sample academic seed data (`seed.sql`) |
-| **Everyone** | **Documentation & Testing** | â€¢ Project architecture documentation, testing, and presentation prep |
+| **Avnish Yadav** | **UI Design & Core Layout (Frontend)** | • Heritage CSS Design System & typography<br>• Responsive Navbar with collapsible side navigation drawer<br>• Homepage (`Home.jsx`) layout, hero banner, and Principal's section<br>• School crest branding and SVG assets |
+| **Rahul Singh** | **Pages & Student Portal UI (Frontend)** | • Informational pages (`About.jsx`, `Academics.jsx`, `Facilities.jsx`)<br>• Interactive stream switcher (Science, Commerce, Humanities)<br>• Notices filtering & search UI (`Notices.jsx`)<br>• Student Portal UI (`StudentLogin.jsx`, `StudentDashboard.jsx`)<br>• Contact page & enquiry form (`Contact.jsx`) and `Footer.jsx` |
+| **Ayush Srivastava** | **API Core & Authentication (Backend)** | • Flask server core architecture (`app.py`)<br>• Werkzeug scrypt password hashing and verification<br>• REST API authentication endpoints (`POST /api/login`)<br>• Frontend-Backend fetch service layer (`api.js`) with fallback caching |
+| **Ishan Bisht** | **Results & Attendance Services (Backend)** | • Student portal API endpoints (`/api/student/profile`, `/api/student/results`)<br>• Dynamic marks calculation, percentage, and grade mapping<br>• Student attendance statistics computation & eligibility logic<br>• Server-side input validation and error handling |
+| **Shivansh** | **Notices & Communication API (Backend)** | • Notice board endpoints (`/api/notices`, `/api/notices/latest`)<br>• Category-based notice filtering logic<br>• Contact form submission endpoint (`POST /api/contact`)<br>• Flask-CORS cross-origin configuration and route documentation |
+| **Rohan** | **Database Schema & Management (Database)** | • PostgreSQL database schema design (`schema.sql`)<br>• Primary key / foreign key relationships with cascade rules<br>• Database connection manager (`database.py`) using `psycopg2`<br>• Automated database initializer script (`init_db.py`)<br>• Realistic sample academic seed data (`seed.sql`) |
+| **Everyone** | **Documentation & Testing** | • Project architecture documentation, testing, and presentation prep |

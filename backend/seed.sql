@@ -1,5 +1,5 @@
 -- =============================================================================
--- SCHOOLHUB SEED DATA
+-- SCHOOLHUB SEED  DATA
 -- Sample data for St. Jude's Heritage Collegiate / SchoolHub Portal
 -- Password for all sample students is: password123
 -- =============================================================================

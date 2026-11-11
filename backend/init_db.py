@@ -1,7 +1,7 @@
 """
 Helper script to initialize or reset the SchoolHub PostgreSQL Database.
 Run this command from your terminal:
-    python init_db.py
+    python  init_db.py
 """
 
 from database import create_database_if_not_exists, initialize_tables

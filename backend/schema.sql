@@ -1,5 +1,5 @@
 -- =============================================================================
--- SCHOOLHUB DATABASE SCHEMA (PostgreSQL)
+-- SCHOOLHUB DATABASE SCHEMA  (PostgreSQL)
 -- Designed for B.Tech Web Development Lab Project
 -- =============================================================================
 

@@ -1,7 +1,7 @@
 """
 Database Connection & Management Module
 Designed for B.Tech Web Development Lab Group Project.
-Uses psycopg2 to establish connection with PostgreSQL database.
+Uses psycopg2 to establish connection with PostgreSQL  database.
 """
 
 import os

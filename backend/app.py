@@ -168,7 +168,11 @@ def submit_contact_enquiry():
 
     name = data.get("name", "").strip()
     email = data.get("email", "").strip()
+    subject = data.get("subject", "").strip()
     message = data.get("message", "").strip()
+
+    if subject and not message.startswith(f"[{subject}]"):
+        message = f"[{subject}] {message}"
 
     # Basic input validation
     if not name or not email or not message:
@@ -369,9 +373,20 @@ def get_student_results():
         results = cur.fetchall()
         cur.close()
 
+        # Format results with native floating-point numbers
+        formatted_results = [
+            {
+                "id": r["id"],
+                "subject": r["subject"],
+                "marks": float(r["marks"]),
+                "total_marks": float(r["total_marks"])
+            }
+            for r in results
+        ]
+
         # Compute summary statistics
-        total_obtained = sum(float(r["marks"]) for r in results) if results else 0
-        total_maximum = sum(float(r["total_marks"]) for r in results) if results else 0
+        total_obtained = sum(r["marks"] for r in formatted_results) if formatted_results else 0
+        total_maximum = sum(r["total_marks"] for r in formatted_results) if formatted_results else 0
         overall_percentage = round((total_obtained / total_maximum) * 100, 2) if total_maximum > 0 else 0
 
         # Grade calculation
@@ -388,7 +403,7 @@ def get_student_results():
 
         return jsonify({
             "success": True,
-            "data": results,
+            "data": formatted_results,
             "summary": {
                 "total_obtained": total_obtained,
                 "total_maximum": total_maximum,

@@ -352,6 +352,8 @@ function initContactForm() {
 
     const name = document.getElementById('contact-name').value.trim();
     const email = document.getElementById('contact-email').value.trim();
+    const subjectEl = document.getElementById('contact-subject');
+    const subject = subjectEl ? subjectEl.value.trim() : '';
     const message = document.getElementById('contact-message').value.trim();
 
     if (!name || !email || !message) {
@@ -376,7 +378,7 @@ function initContactForm() {
       const res = await fetch(`${API_BASE_URL}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message }),
+        body: JSON.stringify({ name, email, subject, message }),
         signal: AbortSignal.timeout(6000)
       });
       const data = await res.json();
@@ -502,7 +504,11 @@ function fillDemoLogin(roll, pwd) {
   const rollInput = document.getElementById('roll-number');
   const pwdInput = document.getElementById('password');
   if (rollInput) rollInput.value = roll;
-  if (pwdInput) pwdInput.value = pwd;
+  if (pwdInput) pwdInput.value = pwd || 'password123';
+}
+
+function quickLogin(roll) {
+  fillDemoLogin(roll, 'password123');
 }
 
 // ==========================================
@@ -519,10 +525,14 @@ async function loadDashboard() {
   const nameEl = document.getElementById('dash-student-name');
   const rollEl = document.getElementById('dash-student-roll');
   const classEl = document.getElementById('dash-student-class');
+  const logoutBtn = document.getElementById('dash-logout-btn');
 
   if (nameEl) nameEl.innerText = student.name;
   if (rollEl) rollEl.innerText = student.roll_number;
   if (classEl) classEl.innerText = `${student.class_name} • Section ${student.section}`;
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
+  }
 
   const studentId = student.id || 1;
   const roll = (student.roll_number || 'SCH202601').toUpperCase();
@@ -594,7 +604,9 @@ async function loadDashboard() {
   const tableBody = document.getElementById('results-table-body');
   if (tableBody) {
     const rows = resultsData.data.map(item => {
-      const pct = Math.round((item.marks / item.total_marks) * 100);
+      const marks = Number(item.marks) || 0;
+      const totalMarks = Number(item.total_marks) || 100;
+      const pct = totalMarks > 0 ? Math.round((marks / totalMarks) * 100) : 0;
       let grade = 'B';
       if (pct >= 90) grade = 'A+';
       else if (pct >= 80) grade = 'A';
@@ -603,8 +615,8 @@ async function loadDashboard() {
       return `
         <tr>
           <td><strong>${escapeHTML(item.subject)}</strong></td>
-          <td>${item.total_marks}</td>
-          <td><strong>${item.marks}</strong></td>
+          <td>${totalMarks}</td>
+          <td><strong>${marks}</strong></td>
           <td>${pct}%</td>
           <td><span class="notice-badge badge-event">${grade}</span></td>
         </tr>
@@ -650,16 +662,26 @@ function initAcademicsTabs() {
 
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
+      tabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
       contents.forEach(c => c.classList.remove('active'));
 
       tab.classList.add('active');
-      const targetId = tab.dataset.target;
+      tab.setAttribute('aria-selected', 'true');
+      const targetId = tab.dataset.tab || tab.dataset.target;
       const targetContent = document.getElementById(targetId);
       if (targetContent) targetContent.classList.add('active');
     });
   });
 }
+
+// Expose critical functions to window for HTML inline event listeners
+window.handleLogout = handleLogout;
+window.fillDemoLogin = fillDemoLogin;
+window.quickLogin = quickLogin;
+window.resetNoticesFilter = resetNoticesFilter;
 
 // ==========================================
 // 7. Global Initialization on DOM Ready

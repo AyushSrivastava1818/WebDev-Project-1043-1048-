@@ -146,44 +146,55 @@ erDiagram
 
 ## 🚀 Quick Start & Setup
 
-### Step 1: Database Setup
-Make sure PostgreSQL is running on port `5432`, then run:
+### Step 1: Install Dependencies
 ```bash
 cd backend
+pip install -r requirements.txt
+```
+
+### Step 2: Configure Environment Variables
+Copy `.env.example` to `.env` in the `backend/` directory:
+```bash
+cp .env.example .env
+```
+Ensure your PostgreSQL credentials (`DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`) match your local database instance.
+
+### Step 3: Initialize Database
+Ensure PostgreSQL is active on port `5432`, then run:
+```bash
 python init_db.py
 ```
-*This creates the `schoolhub` database, tables from `schema.sql`, and sample records from `seed.sql`.*
+*This creates the `schoolhub` database, executes table definitions from `schema.sql`, and inserts seed records from `seed.sql`.*
 
-### Step 2: Start Flask Backend
+### Step 4: Start Flask Backend Server
 ```bash
-cd backend
 python app.py
 ```
-*Backend runs on `http://localhost:5000`.*
+*The Flask REST API will start on `http://localhost:5000` with CORS enabled.*
 
-### Step 3: Run Frontend
+### Step 5: Launch Frontend
 Open `frontend/index.html` directly in any web browser, or serve it using Python's built-in static server:
 ```bash
-cd frontend
+cd ../frontend
 python -m http.server 8000
 ```
-*Frontend runs on `http://localhost:8000`.*
+*Access the school portal at `http://localhost:8000`.*
 
 ---
 
 ## 📡 API Endpoints
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/health` | System health and database connectivity |
-| `GET` | `/api/notices` | All notices (optional filter: `?category=Academic`) |
-| `GET` | `/api/notices/latest` | Latest 4 notices for the homepage |
-| `POST` | `/api/contact` | Submits enquiry into `enquiries` table |
-| `POST` | `/api/login` | Authenticates student roll number & password |
-| `POST` | `/api/logout` | Clears active student session |
-| `GET` | `/api/student/profile` | Student profile info (`?student_id=1`) |
-| `GET` | `/api/student/results` | Subject marks, percentage & grade (`?student_id=1`) |
-| `GET` | `/api/student/attendance` | Attendance count, percentage & eligibility (`?student_id=1`) |
+| Method | Endpoint | Request Payload / Params | Description |
+|---|---|---|---|
+| `GET` | `/api/health` | — | System health and database connectivity check |
+| `GET` | `/api/notices` | `?category=Academic` *(optional)* | Retrieve all published school notices |
+| `GET` | `/api/notices/latest` | — | Retrieves latest notices for homepage ticker/cards |
+| `POST` | `/api/contact` | `{ name, email, subject, message }` | Records admissions/general enquiry into database |
+| `POST` | `/api/login` | `{ roll_number, password }` | Authenticates student credentials (Werkzeug hash) |
+| `POST` | `/api/logout` | — | Terminates active student session |
+| `GET` | `/api/student/profile` | `?student_id=1` | Student identity, class, and section information |
+| `GET` | `/api/student/results` | `?student_id=1` | Subject-wise marks, computed percentage & grade |
+| `GET` | `/api/student/attendance` | `?student_id=1` | Attendance statistics & Board exam eligibility |
 
 ### Demo Student Login Accounts
 - **Alexander Vance**: Roll `SCH202601` | Password `password123` *(Class 12-A, 93.3% Attendance)*

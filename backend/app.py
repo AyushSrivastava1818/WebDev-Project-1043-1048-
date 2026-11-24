@@ -30,8 +30,8 @@ app = Flask(__name__)
 # Secret key for session signing
 app.secret_key = os.getenv("SECRET_KEY", "heritage_academy_secure_session_key_2026")
 
-# Enable Cross-Origin Resource Sharing (CORS) so React running on port 5173 can call this API
-CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173"])
+# Enable Cross-Origin Resource Sharing (CORS) with universal local dev origin support
+CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}})
 
 
 # -----------------------------------------------------------------------------
@@ -303,9 +303,9 @@ def student_login():
 def get_student_profile():
     """
     Retrieves student identity details.
-    Accepts 'student_id' via query param: /api/student/profile?student_id=1
+    Accepts 'student_id' via query param: /api/student/profile?student_id=1 or from active session.
     """
-    student_id = session.get("student_id")
+    student_id = request.args.get("student_id") or session.get("student_id")
 
     if not student_id:
         return jsonify({"success": False, "message": "Student ID parameter is required."}), 400
@@ -347,8 +347,9 @@ def get_student_profile():
 def get_student_results():
     """
     Retrieves subject-wise marks and computes overall percentage and performance.
+    Accepts 'student_id' via query param: /api/student/results?student_id=1 or from active session.
     """
-    student_id = session.get("student_id")
+    student_id = request.args.get("student_id") or session.get("student_id")
 
     if not student_id:
         return jsonify({"success": False, "message": "Student ID parameter is required."}), 400
@@ -472,6 +473,21 @@ def get_student_attendance():
     finally:
         if conn:
             conn.close()
+
+
+# -----------------------------------------------------------------------------
+# 6. LOGOUT ENDPOINT
+# -----------------------------------------------------------------------------
+@app.route("/api/logout", methods=["POST", "GET"])
+def logout_student():
+    """
+    Clears the student session state.
+    """
+    session.clear()
+    return jsonify({
+        "success": True,
+        "message": "Logged out successfully."
+    }), 200
 
 
 # -----------------------------------------------------------------------------

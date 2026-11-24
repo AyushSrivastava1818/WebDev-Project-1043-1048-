@@ -1,16 +1,38 @@
-# React + Vite
+# St. Jude's Academy - Institutional Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+This directory contains the standard, semantic HTML5, CSS3, and vanilla JavaScript client-side interface for the St. Jude's Academy institutional portal.
 
-Currently, two official plugins are available:
+## Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```
+frontend/
+├── assets/             # Brand logos, crests, and graphical assets
+├── css/
+│   └── style.css       # Institutional design system & responsive styling
+├── js/
+│   └── main.js         # API integration, session handling, and UI interactivity
+├── index.html          # Campus homepage & principal's address
+├── about.html          # Institutional heritage, values, & milestones
+├── academics.html      # Senior secondary streams & examination scheme
+├── facilities.html     # Laboratories, library, & sports complex
+├── notices.html        # Real-time circulars & search
+├── contact.html        # Campus office details & enquiry submission
+├── login.html          # Scholar credential authentication
+└── dashboard.html      # Student performance transcript & attendance meter
+```
 
-## React Compiler
+## Running the Application
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Because this frontend is built entirely on standard Web standards (HTML5/CSS3/ES6+), it requires no package manager or build step.
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+### Quick Start
+1. Ensure the Python Flask backend is running on `http://localhost:5000`:
+   ```bash
+   cd ../backend
+   python app.py
+   ```
+2. Serve the frontend with any static web server:
+   ```bash
+   python -m http.server 8000
+   ```
+   Or open `index.html` directly in any modern browser.

@@ -6,7 +6,17 @@
  * =============================================================================
  */
 
-const API_BASE_URL = window.API_BASE_URL || (window.location.hostname === 'localhost' && window.location.port !== '5000' && window.location.port !== '' ? 'http://localhost:5000/api' : '/api');
+// Seamless API URL resolution for both local development and deployed production
+function getApiBaseUrl() {
+  if (window.API_BASE_URL) return window.API_BASE_URL;
+  const isFile = window.location.protocol === 'file:';
+  const isLocalDevServer = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && window.location.port !== '5000';
+  if (isFile || isLocalDevServer) {
+    return 'http://localhost:5000/api';
+  }
+  return '/api';
+}
+const API_BASE_URL = getApiBaseUrl();
 
 // Fallback notices for presentation & offline resilience
 const FALLBACK_NOTICES = [

@@ -22,8 +22,23 @@ app = Flask(__name__, static_folder=frontend_dir, static_url_path="")
 # Secret key for session signing
 app.secret_key = os.getenv("SECRET_KEY", "heritage_academy_secure_session_key_2026")
 
-# Enable Cross-Origin Resource Sharing (CORS) with universal local dev origin support
-CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}})
+# Session cookie configuration (compatible with HTTP localhost & HTTPS Render)
+app.config.update(
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=False,
+    SESSION_COOKIE_HTTPONLY=True,
+)
+
+# Enable CORS with credentials support across all local ports and production domains
+allowed_origins = [
+    r"^https?://localhost(:\d+)?$",
+    r"^https?://127\.0\.0\.1(:\d+)?$",
+    r"^https://.*\.onrender\.com$",
+]
+if os.getenv("FRONTEND_URL"):
+    allowed_origins.append(os.getenv("FRONTEND_URL"))
+
+CORS(app, supports_credentials=True, origins=allowed_origins)
 
 
 # -----------------------------------------------------------------------------

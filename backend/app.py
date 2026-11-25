@@ -1,3 +1,17 @@
+"""
+=============================================================================
+SCHOOLHUB - FLASK REST API BACKEND
+Developed for B.Tech Web Development Lab Group Project.
+
+Technologies:
+- Python 3
+- Flask (Micro web framework)
+- Flask-CORS (Cross-Origin Resource Sharing for React frontend)
+- psycopg2 (PostgreSQL database driver)
+- Werkzeug (Secure password hashing and verification)
+=============================================================================
+"""
+
 import os
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
@@ -16,8 +30,8 @@ app = Flask(__name__)
 # Secret key for session signing
 app.secret_key = os.getenv("SECRET_KEY", "heritage_academy_secure_session_key_2026")
 
-# Enable Cross-Origin Resource Sharing (CORS) so React running on port 5173 can call this API
-CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173"])
+# Enable Cross-Origin Resource Sharing (CORS) with universal local dev origin support
+CORS(app, supports_credentials=True, resources={r"/api/*": {"origins": "*"}})
 
 
 # -----------------------------------------------------------------------------
@@ -25,6 +39,10 @@ CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://1
 # -----------------------------------------------------------------------------
 @app.route("/api/health", methods=["GET"])
 def health_check():
+    """
+    Simple endpoint to verify that the Flask server and PostgreSQL connection
+    are functioning properly.
+    """
     try:
         conn = get_db_connection()
         conn.close()
@@ -46,6 +64,10 @@ def health_check():
 # -----------------------------------------------------------------------------
 @app.route("/api/notices", methods=["GET"])
 def get_all_notices():
+    """
+    Fetches all school notices from PostgreSQL.
+    Supports optional category filtering: /api/notices?category=Academic
+    """
     category = request.args.get("category")
 
     conn = None
@@ -95,6 +117,9 @@ def get_all_notices():
 
 @app.route("/api/notices/latest", methods=["GET"])
 def get_latest_notices():
+    """
+    Retrieves the most recent 4 notices for display on the Homepage announcement bar.
+    """
     conn = None
     try:
         conn = get_db_connection()
@@ -132,6 +157,10 @@ def get_latest_notices():
 # -----------------------------------------------------------------------------
 @app.route("/api/contact", methods=["POST"])
 def submit_contact_enquiry():
+    """
+    Receives contact form submissions and saves them into the 'enquiries' PostgreSQL table.
+    Validates that name, email, and message are non-empty.
+    """
     data = request.get_json()
 
     if not data:
@@ -139,7 +168,11 @@ def submit_contact_enquiry():
 
     name = data.get("name", "").strip()
     email = data.get("email", "").strip()
+    subject = data.get("subject", "").strip()
     message = data.get("message", "").strip()
+
+    if subject and not message.startswith(f"[{subject}]"):
+        message = f"[{subject}] {message}"
 
     # Basic input validation
     if not name or not email or not message:
@@ -193,6 +226,10 @@ def submit_contact_enquiry():
 # -----------------------------------------------------------------------------
 @app.route("/api/login", methods=["POST"])
 def student_login():
+    """
+    Authenticates a student using their unique Roll Number and Password.
+    Uses Werkzeug's secure check_password_hash() comparison.
+    """
     data = request.get_json()
 
     if not data:
@@ -268,7 +305,11 @@ def student_login():
 # -----------------------------------------------------------------------------
 @app.route("/api/student/profile", methods=["GET"])
 def get_student_profile():
-    student_id = session.get("student_id")
+    """
+    Retrieves student identity details.
+    Accepts 'student_id' via query param: /api/student/profile?student_id=1 or from active session.
+    """
+    student_id = request.args.get("student_id") or session.get("student_id")
 
     if not student_id:
         return jsonify({"success": False, "message": "Student ID parameter is required."}), 400
@@ -308,7 +349,11 @@ def get_student_profile():
 
 @app.route("/api/student/results", methods=["GET"])
 def get_student_results():
-    student_id = session.get("student_id")
+    """
+    Retrieves subject-wise marks and computes overall percentage and performance.
+    Accepts 'student_id' via query param: /api/student/results?student_id=1 or from active session.
+    """
+    student_id = request.args.get("student_id") or session.get("student_id")
 
     if not student_id:
         return jsonify({"success": False, "message": "Student ID parameter is required."}), 400
@@ -328,9 +373,20 @@ def get_student_results():
         results = cur.fetchall()
         cur.close()
 
+        # Format results with native floating-point numbers
+        formatted_results = [
+            {
+                "id": r["id"],
+                "subject": r["subject"],
+                "marks": float(r["marks"]),
+                "total_marks": float(r["total_marks"])
+            }
+            for r in results
+        ]
+
         # Compute summary statistics
-        total_obtained = sum(float(r["marks"]) for r in results) if results else 0
-        total_maximum = sum(float(r["total_marks"]) for r in results) if results else 0
+        total_obtained = sum(r["marks"] for r in formatted_results) if formatted_results else 0
+        total_maximum = sum(r["total_marks"] for r in formatted_results) if formatted_results else 0
         overall_percentage = round((total_obtained / total_maximum) * 100, 2) if total_maximum > 0 else 0
 
         # Grade calculation
@@ -347,7 +403,7 @@ def get_student_results():
 
         return jsonify({
             "success": True,
-            "data": results,
+            "data": formatted_results,
             "summary": {
                 "total_obtained": total_obtained,
                 "total_maximum": total_maximum,
@@ -369,6 +425,9 @@ def get_student_results():
 
 @app.route("/api/student/attendance", methods=["GET"])
 def get_student_attendance():
+    """
+    Retrieves attendance statistics for the student and calculates presence percentage.
+    """
     student_id = request.args.get("student_id") or session.get("student_id")
 
     if not student_id:
@@ -429,6 +488,21 @@ def get_student_attendance():
     finally:
         if conn:
             conn.close()
+
+
+# -----------------------------------------------------------------------------
+# 6. LOGOUT ENDPOINT
+# -----------------------------------------------------------------------------
+@app.route("/api/logout", methods=["POST", "GET"])
+def logout_student():
+    """
+    Clears the student session state.
+    """
+    session.clear()
+    return jsonify({
+        "success": True,
+        "message": "Logged out successfully."
+    }), 200
 
 
 # -----------------------------------------------------------------------------

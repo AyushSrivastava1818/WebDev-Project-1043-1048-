@@ -1,17 +1,3 @@
-"""
-=============================================================================
-SCHOOLHUB - FLASK REST API BACKEND
-Developed for B.Tech Web Development Lab Group Project.
-
-Technologies:
-- Python 3
-- Flask (Micro web framework)
-- Flask-CORS (Cross-Origin Resource Sharing for React frontend)
-- psycopg2 (PostgreSQL database driver)
-- Werkzeug (Secure password hashing and verification)
-=============================================================================
-"""
-
 import os
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
@@ -39,10 +25,6 @@ CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://1
 # -----------------------------------------------------------------------------
 @app.route("/api/health", methods=["GET"])
 def health_check():
-    """
-    Simple endpoint to verify that the Flask server and PostgreSQL connection
-    are functioning properly.
-    """
     try:
         conn = get_db_connection()
         conn.close()
@@ -64,10 +46,6 @@ def health_check():
 # -----------------------------------------------------------------------------
 @app.route("/api/notices", methods=["GET"])
 def get_all_notices():
-    """
-    Fetches all school notices from PostgreSQL.
-    Supports optional category filtering: /api/notices?category=Academic
-    """
     category = request.args.get("category")
 
     conn = None
@@ -117,9 +95,6 @@ def get_all_notices():
 
 @app.route("/api/notices/latest", methods=["GET"])
 def get_latest_notices():
-    """
-    Retrieves the most recent 4 notices for display on the Homepage announcement bar.
-    """
     conn = None
     try:
         conn = get_db_connection()
@@ -157,10 +132,6 @@ def get_latest_notices():
 # -----------------------------------------------------------------------------
 @app.route("/api/contact", methods=["POST"])
 def submit_contact_enquiry():
-    """
-    Receives contact form submissions and saves them into the 'enquiries' PostgreSQL table.
-    Validates that name, email, and message are non-empty.
-    """
     data = request.get_json()
 
     if not data:
@@ -222,10 +193,6 @@ def submit_contact_enquiry():
 # -----------------------------------------------------------------------------
 @app.route("/api/login", methods=["POST"])
 def student_login():
-    """
-    Authenticates a student using their unique Roll Number and Password.
-    Uses Werkzeug's secure check_password_hash() comparison.
-    """
     data = request.get_json()
 
     if not data:
@@ -301,10 +268,6 @@ def student_login():
 # -----------------------------------------------------------------------------
 @app.route("/api/student/profile", methods=["GET"])
 def get_student_profile():
-    """
-    Retrieves student identity details.
-    Accepts 'student_id' via query param: /api/student/profile?student_id=1
-    """
     student_id = session.get("student_id")
 
     if not student_id:
@@ -345,9 +308,6 @@ def get_student_profile():
 
 @app.route("/api/student/results", methods=["GET"])
 def get_student_results():
-    """
-    Retrieves subject-wise marks and computes overall percentage and performance.
-    """
     student_id = session.get("student_id")
 
     if not student_id:
@@ -409,9 +369,6 @@ def get_student_results():
 
 @app.route("/api/student/attendance", methods=["GET"])
 def get_student_attendance():
-    """
-    Retrieves attendance statistics for the student and calculates presence percentage.
-    """
     student_id = request.args.get("student_id") or session.get("student_id")
 
     if not student_id:

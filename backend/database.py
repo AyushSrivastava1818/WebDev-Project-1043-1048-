@@ -1,9 +1,3 @@
-"""
-Database Connection & Management Module
-Designed for B.Tech Web Development Lab Group Project.
-Uses psycopg2 to establish connection with PostgreSQL  database.
-"""
-
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -20,10 +14,6 @@ DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres")
 
 
 def get_db_connection():
-    """
-    Creates and returns a live connection to PostgreSQL database.
-    Uses RealDictCursor by default so rows can be accessed like Python dictionaries.
-    """
     connection = psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
@@ -36,10 +26,6 @@ def get_db_connection():
 
 
 def create_database_if_not_exists():
-    """
-    Connects to the default 'postgres' database and creates the 'schoolhub'
-    database if it does not already exist.
-    """
     try:
         # Connect to default postgres DB with autocommit
         conn = psycopg2.connect(
@@ -68,9 +54,6 @@ def create_database_if_not_exists():
 
 
 def initialize_tables():
-    """
-    Reads schema.sql and seed.sql to initialize tables and insert starter data.
-    """
     base_dir = os.path.dirname(os.path.abspath(__file__))
     schema_path = os.path.join(base_dir, "schema.sql")
     seed_path = os.path.join(base_dir, "seed.sql")

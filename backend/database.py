@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+DATABASE_URL = os.getenv("DATABASE_URL")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "5432")
 DB_NAME = os.getenv("DB_NAME", "schoolhub")
@@ -14,6 +15,12 @@ DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres")
 
 
 def get_db_connection():
+    if DATABASE_URL:
+        url = DATABASE_URL
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql://", 1)
+        return psycopg2.connect(url, cursor_factory=RealDictCursor)
+
     connection = psycopg2.connect(
         host=DB_HOST,
         port=DB_PORT,
@@ -26,6 +33,8 @@ def get_db_connection():
 
 
 def create_database_if_not_exists():
+    if DATABASE_URL:
+        return
     try:
         # Connect to default postgres DB with autocommit
         conn = psycopg2.connect(
@@ -80,6 +89,24 @@ def initialize_tables():
         raise e
     finally:
         conn.close()
+
+
+def initialize_tables_if_needed():
+    try:
+        conn = get_db_connection()
+        with conn.cursor() as cur:
+            cur.execute("SELECT to_regclass('public.students');")
+            result = cur.fetchone()
+            table_exists = result and result.get("to_regclass") is not None
+        conn.close()
+
+        if not table_exists:
+            print("[DB Setup] Tables not found. Initializing database schema and seed data...")
+            initialize_tables()
+        else:
+            print("[DB Setup] Database tables already present.")
+    except Exception as e:
+        print(f"[DB Setup Warning] Could not verify/initialize tables automatically: {e}")
 
 
 if __name__ == "__main__":

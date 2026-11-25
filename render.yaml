@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: schoolhub
+    runtime: python
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "cd backend && gunicorn app:app"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: schoolhub-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.9
+
+databases:
+  - name: schoolhub-db
+    databaseName: schoolhub
+    user: schoolhub_user
+    plan: free

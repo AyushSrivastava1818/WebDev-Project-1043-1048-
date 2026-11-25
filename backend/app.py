@@ -1,17 +1,23 @@
 import os
-from flask import Flask, request, jsonify, session
+from flask import Flask, request, jsonify, session, send_from_directory
 from flask_cors import CORS
 from werkzeug.security import check_password_hash
 from dotenv import load_dotenv
 
 # Import database connection helper from database.py
-from database import get_db_connection
+from database import get_db_connection, initialize_tables_if_needed
 
 # Load environment configuration (.env)
 load_dotenv()
 
-# Initialize Flask application
-app = Flask(__name__)
+# Initialize database tables if not already present
+initialize_tables_if_needed()
+
+# Determine frontend directory path
+frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
+
+# Initialize Flask application with static folder support
+app = Flask(__name__, static_folder=frontend_dir, static_url_path="")
 
 # Secret key for session signing
 app.secret_key = os.getenv("SECRET_KEY", "heritage_academy_secure_session_key_2026")
@@ -456,6 +462,26 @@ def logout_student():
         "success": True,
         "message": "Logged out successfully."
     }), 200
+
+
+# -----------------------------------------------------------------------------
+# 7. FRONTEND STATIC FILE SERVING (For production on Render / Heroku)
+# -----------------------------------------------------------------------------
+@app.route("/")
+def serve_index():
+    if os.path.exists(os.path.join(frontend_dir, "index.html")):
+        return send_from_directory(frontend_dir, "index.html")
+    return jsonify({"status": "online", "message": "SchoolHub API is running."})
+
+
+@app.route("/<path:filename>")
+def serve_static_content(filename):
+    file_path = os.path.join(frontend_dir, filename)
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return send_from_directory(frontend_dir, filename)
+    if os.path.exists(os.path.join(frontend_dir, "index.html")):
+        return send_from_directory(frontend_dir, "index.html")
+    return jsonify({"error": "File not found"}), 404
 
 
 # -----------------------------------------------------------------------------
